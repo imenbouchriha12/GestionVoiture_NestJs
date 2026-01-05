@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>voitures Management</title>
+
+  <!-- Socket.io fourni par NestJS -->
+  <script src="/socket.io/socket.io.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f6fa;
+      padding: 20px;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 4px;
+    }
+
+    .btn-add {
+      background: #2ecc71;
+      color: white;
+      margin-bottom: 10px;
+    }
+
+    .btn-edit {
+      background: #f39c12;
+      color: white;
+    }
+
+    .btn-delete {
+      background: #e74c3c;
+      color: white;
+    }
+
+    .btn-details {
+      background: #3498db;
+      color: white;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      margin-top: 10px;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      background: #2c3e50;
+      color: white;
+    }
+
+    tr:hover {
+      background: #f1f1f1;
+    }
+
+    #form, #details {
+      margin-top: 15px;
+      padding: 15px;
+      background: white;
+      border-radius: 6px;
+      display: none;
+    }
+
+    input {
+      padding: 8px;
+      margin: 5px;
+      width: 200px;
+    }
+
+    .row {
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>👤 voitures Management</h2>
+
+  <button class="btn-add" onclick="showForm()">➕ Add voiture</button>
+<button onclick="showAll()">Toutes</button>
+<button onclick="showAvailable()">Disponibles</button>
+
+  <!-- voitureS TABLE -->
+  <table>
+    <thead>
+      <tr>
+        <th>Brand</th>
+        <th>Model</th>
+        <th>Color</th>
+        <th>Year</th>
+        <th>Price</th>
+        <th>Age</th>
+        <th>Kilometrage</th>
+        <th>Available</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="voituresTable"></tbody>
+  </table>
+
+  <!-- FORM ADD / EDIT -->
+  <div id="form">
+    <h3 id="formTitle">Add voiture</h3>
+    <input id="brand" placeholder="Brand" />
+    <input id="model" placeholder="Model" />
+    <input id="color" placeholder="Color" />
+    <input id="year" placeholder="Year" type="Date" />
+    <input id="price" placeholder="Price" type="number" />
+    <input id="mileage" placeholder="kilometrage" type="number" />
+    <label>Available
+    <input id="isAvailable" type="checkbox" />
+    </label>
+
+
+
+
+
+    <br />
+    <button class="btn-add" onclick="submitForm()">Save</button>
+    <button onclick="hideForm()">Cancel</button>
+  </div>
+
+  <!-- DETAILS -->
+  <div id="details">
+    <h3>📄 voiture Details</h3>
+    <div class="row"><strong>Brand:</strong> <span id="d-brand"></span></div>
+    <div class="row"><strong>Model:</strong> <span id="d-model"></span></div>
+    <div class="row"><strong>Color:</strong> <span id="d-color"></span></div>
+    <div class="row"><strong>year:</strong> <span id="d-year"></span></div>
+    <div class="row"><strong>price:</strong> <span id="d-price"></span></div>
+    <div class="row"><strong>age:</strong> <span id="d-age"></span></div>
+    <div class="row"><strong>kilometrage:</strong> <span id="d-mileage"></span></div>
+    <div class="row"><strong>isAvailable</strong> <span id="d-isAvailable"></span></div>
+
+
+
+    <br />
+    <button onclick="hideDetails()">Close</button>
+  </div>
+
+  <!-- ✅ JS SÉPARÉ -->
+  <script src="voiture.js"></script>
+
+</body>
+</html>
