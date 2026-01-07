@@ -2,6 +2,7 @@ const socket = io();
 let voitures = [];
 let editVoitureId = null;
 let showOnlyAvailable = false;
+let searchText = '';
 
 // ================= SOCKET EVENTS =================
 
@@ -51,9 +52,20 @@ function renderVoitures(data) {
   table.innerHTML = '';
 
   // ✅ appliquer le filtre selon le bouton cliqué
-  const list = showOnlyAvailable
-    ? voitures.filter(v => v.isAvailable === true)
-    : voitures;
+let list = voitures;
+
+// filtre disponibilité
+if (showOnlyAvailable) {
+  list = list.filter(v => v.isAvailable === true);
+}
+
+// filtre recherche (brand ou model)
+if (searchText) {
+  list = list.filter(v =>
+    v.brand.toLowerCase().includes(searchText) ||
+    v.model.toLowerCase().includes(searchText)
+  );
+}
 
   list.forEach(v => {
     const year = new Date(v.year).getFullYear();
@@ -169,4 +181,11 @@ function deleteVoiture(id) {
   if (confirm('Delete this voiture ?')) {
     socket.emit('voiture:delete', id);
   }
+
+
+  function searchVoiture() {
+  searchText = document.getElementById('searchInput').value.toLowerCase();
+  renderVoitures();
+}
+
 }

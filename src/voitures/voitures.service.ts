@@ -65,5 +65,17 @@ async calculAge(id: string): Promise<{ age: number }> {
   return { age };
 }
 
+// SEARCH by marque or modele
+async search(keyword: string): Promise<Voiture[]> {
+  return this.voitureRepo.find({
+    where: {
+      $or: [
+        { marque: { $regex: keyword, $options: 'i' } },
+        { modele: { $regex: keyword, $options: 'i' } },
+      ],
+    },
+  });
+}
+
 
 }
