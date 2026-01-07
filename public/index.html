@@ -2,166 +2,477 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>voitures Management</title>
-
-  <!-- Socket.io fourni par NestJS -->
+  <title>Voitures Management - Interface Complète</title>
   <script src="/socket.io/socket.io.js"></script>
 
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background: #f5f6fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
     }
 
     h2 {
-      margin-bottom: 10px;
+      color: #2c3e50;
+      margin-bottom: 20px;
+      font-size: 32px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+
+    .toolbar-section {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      padding: 5px 10px;
+      border-left: 3px solid #ddd;
+    }
+
+    .toolbar-section:first-child {
+      border-left: none;
+    }
+
+    .toolbar-label {
+      font-weight: 600;
+      color: #555;
+      font-size: 14px;
     }
 
     button {
-      padding: 6px 12px;
+      padding: 8px 16px;
       border: none;
-      border-radius: 4px;
+      border-radius: 6px;
       cursor: pointer;
-      margin-right: 4px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    button:active {
+      transform: translateY(0);
     }
 
     .btn-add {
       background: #2ecc71;
       color: white;
-      margin-bottom: 10px;
+    }
+
+    .btn-add:hover {
+      background: #27ae60;
+    }
+
+    .btn-primary {
+      background: #3498db;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #2980b9;
+    }
+
+    .btn-secondary {
+      background: #95a5a6;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #7f8c8d;
     }
 
     .btn-edit {
       background: #f39c12;
       color: white;
+      padding: 6px 12px;
+      font-size: 12px;
     }
 
     .btn-delete {
       background: #e74c3c;
       color: white;
+      padding: 6px 12px;
+      font-size: 12px;
     }
 
     .btn-details {
       background: #3498db;
       color: white;
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .btn-action {
+      background: #9b59b6;
+      color: white;
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    select {
+      padding: 10px;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border 0.3s;
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: #3498db;
+    }
+
+    .search-box {
+      padding: 10px 15px;
+      width: 300px;
+      border: 2px solid #ddd;
+      border-radius: 25px;
+      font-size: 14px;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
       background: white;
-      margin-top: 10px;
+      margin-top: 20px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
 
     th, td {
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
+      padding: 12px;
       text-align: left;
+      border-bottom: 1px solid #ecf0f1;
     }
 
     th {
-      background: #2c3e50;
+      background: #34495e;
       color: white;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.5px;
     }
 
     tr:hover {
-      background: #f1f1f1;
+      background: #f8f9fa;
     }
 
-    #form, #details {
-      margin-top: 15px;
-      padding: 15px;
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .badge-yes {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .badge-no {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    #form, #details, #stats, #advanced {
+      margin-top: 20px;
+      padding: 25px;
       background: white;
-      border-radius: 6px;
+      border-radius: 10px;
       display: none;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      border: 2px solid #ecf0f1;
     }
 
-    input {
-      padding: 8px;
-      margin: 5px;
-      width: 200px;
+    .form-group {
+      margin-bottom: 15px;
     }
 
-    .row {
-      margin-bottom: 6px;
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+      color: #555;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .form-actions {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .stat-card h4 {
+      font-size: 14px;
+      opacity: 0.9;
+      margin-bottom: 10px;
+    }
+
+    .stat-card .value {
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 40px;
+      color: #95a5a6;
+      font-size: 18px;
+    }
+
+    .actions-cell {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    h3 {
+      color: #2c3e50;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #ecf0f1;
+    }
+
+    .detail-row {
+      padding: 10px 0;
+      border-bottom: 1px solid #ecf0f1;
+    }
+
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .detail-row strong {
+      display: inline-block;
+      width: 150px;
+      color: #555;
     }
   </style>
 </head>
 <body>
 
-  <h2>👤 voitures Management</h2>
+  <div class="container">
+    <h2>🚗 Voitures Management System</h2>
 
-  <button class="btn-add" onclick="showForm()">➕ Add voiture</button>
-<button onclick="showAll()">Toutes</button>
-<button onclick="showAvailable()">Disponibles</button>
-<input
-  type="text"
-  id="searchInput"
-  placeholder="🔍 Search by brand or model"
-  onkeyup="searchVoiture()"
-  style="padding:8px; width:250px; margin-left:10px;"
-/>
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <div class="toolbar-section">
+        <span class="toolbar-label">Actions:</span>
+        <button class="btn-add" onclick="showForm()">➕ Ajouter</button>
+        <button class="btn-primary" onclick="toggleStats()">📊 Statistiques</button>
+        <button class="btn-primary" onclick="toggleAdvanced()">🔧 Recherche Avancée</button>
+      </div>
 
-  <!-- voitureS TABLE -->
-  <table>
-    <thead>
-      <tr>
-        <th>Brand</th>
-        <th>Model</th>
-        <th>Color</th>
-        <th>Year</th>
-        <th>Price</th>
-        <th>Age</th>
-        <th>Kilometrage</th>
-        <th>Available</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody id="voituresTable"></tbody>
-  </table>
+      <div class="toolbar-section">
+        <span class="toolbar-label">Filtres:</span>
+        <button class="btn-primary" onclick="showAll()">Toutes</button>
+        <button class="btn-primary" onclick="showAvailable()">Disponibles</button>
+      </div>
 
-  <!-- FORM ADD / EDIT -->
-  <div id="form">
-    <h3 id="formTitle">Add voiture</h3>
-    <input id="brand" placeholder="Brand" />
-    <input id="model" placeholder="Model" />
-    <input id="color" placeholder="Color" />
-    <input id="year" placeholder="Year" type="Date" />
-    <input id="price" placeholder="Price" type="number" />
-    <input id="mileage" placeholder="kilometrage" type="number" />
-    <label>Available
-    <input id="isAvailable" type="checkbox" />
-    </label>
+      <div class="toolbar-section">
+        <span class="toolbar-label">Tri:</span>
+        <button class="btn-secondary" onclick="sortByPrice('ASC')">💰 Prix ↑</button>
+        <button class="btn-secondary" onclick="sortByPrice('DESC')">💰 Prix ↓</button>
+      </div>
 
+      <div class="toolbar-section">
+        <input
+          type="text"
+          id="searchInput"
+          class="search-box"
+          placeholder="🔍 Rechercher par marque ou modèle..."
+          onkeyup="searchVoiture()"
+        />
+      </div>
+    </div>
 
+    <!-- STATISTIQUES -->
+    <div id="stats">
+      <h3>📊 Statistiques Globales</h3>
+      <div class="stats-grid" id="statsContent"></div>
+      <button class="btn-secondary" onclick="hideStats()" style="margin-top: 15px;">Fermer</button>
+    </div>
 
+    <!-- RECHERCHE AVANCÉE -->
+    <div id="advanced">
+      <h3>🔧 Recherche Avancée</h3>
+      <div class="filter-row">
+        <div class="form-group">
+          <label>Prix Min:</label>
+          <input type="number" id="minPrice" placeholder="ex: 10000">
+        </div>
+        <div class="form-group">
+          <label>Prix Max:</label>
+          <input type="number" id="maxPrice" placeholder="ex: 50000">
+        </div>
+        <div class="form-group">
+          <label>Année Min:</label>
+          <input type="number" id="minYear" placeholder="ex: 2020">
+        </div>
+        <div class="form-group">
+          <label>Kilométrage Max:</label>
+          <input type="number" id="maxMileage" placeholder="ex: 100000">
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-primary" onclick="applyAdvancedFilters()">Appliquer les filtres</button>
+        <button class="btn-secondary" onclick="clearAdvancedFilters()">Réinitialiser</button>
+        <button class="btn-secondary" onclick="hideAdvanced()">Fermer</button>
+      </div>
+    </div>
 
+    <!-- TABLE -->
+    <table>
+      <thead>
+        <tr>
+          <th>Marque</th>
+          <th>Modèle</th>
+          <th>Couleur</th>
+          <th>Année</th>
+          <th>Prix (€)</th>
+          <th>Âge</th>
+          <th>Kilométrage</th>
+          <th>Disponible</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="voituresTable"></tbody>
+    </table>
 
-    <br />
-    <button class="btn-add" onclick="submitForm()">Save</button>
-    <button onclick="hideForm()">Cancel</button>
+    <!-- FORM ADD / EDIT -->
+    <div id="form">
+      <h3 id="formTitle">➕ Ajouter une Voiture</h3>
+      <div class="form-group">
+        <label>Marque:</label>
+        <input id="brand" placeholder="ex: Toyota" />
+      </div>
+      <div class="form-group">
+        <label>Modèle:</label>
+        <input id="model" placeholder="ex: Corolla" />
+      </div>
+      <div class="form-group">
+        <label>Couleur:</label>
+        <input id="color" placeholder="ex: Bleu" />
+      </div>
+      <div class="form-group">
+        <label>Année:</label>
+        <input id="year" type="date" />
+      </div>
+      <div class="form-group">
+        <label>Prix (€):</label>
+        <input id="price" placeholder="ex: 25000" type="number" />
+      </div>
+      <div class="form-group">
+        <label>Kilométrage:</label>
+        <input id="mileage" placeholder="ex: 50000" type="number" />
+      </div>
+      <div class="form-group">
+        <label>
+          <input id="isAvailable" type="checkbox" />
+          Disponible
+        </label>
+      </div>
+      <div class="form-actions">
+        <button class="btn-add" onclick="submitForm()">💾 Enregistrer</button>
+        <button class="btn-secondary" onclick="hideForm()">Annuler</button>
+      </div>
+    </div>
+
+    <!-- DETAILS -->
+    <div id="details">
+      <h3>📄 Détails de la Voiture</h3>
+      <div class="detail-row"><strong>Marque:</strong> <span id="d-brand"></span></div>
+      <div class="detail-row"><strong>Modèle:</strong> <span id="d-model"></span></div>
+      <div class="detail-row"><strong>Couleur:</strong> <span id="d-color"></span></div>
+      <div class="detail-row"><strong>Année:</strong> <span id="d-year"></span></div>
+      <div class="detail-row"><strong>Prix:</strong> <span id="d-price"></span> €</div>
+      <div class="detail-row"><strong>Âge:</strong> <span id="d-age"></span> ans</div>
+      <div class="detail-row"><strong>Kilométrage:</strong> <span id="d-mileage"></span> km</div>
+      <div class="detail-row"><strong>Disponible:</strong> <span id="d-isAvailable"></span></div>
+      
+      <h3 style="margin-top: 20px;">🔧 Actions Rapides</h3>
+      <div class="form-actions">
+        <button class="btn-action" onclick="applySimilar()">🔍 Voitures Similaires</button>
+        <button class="btn-action" onclick="applyDiscountPrompt()">💸 Appliquer Remise</button>
+        <button class="btn-action" onclick="markAsSoldAction()">❌ Marquer Vendue</button>
+        <button class="btn-action" onclick="markAsAvailableAction()">✅ Marquer Disponible</button>
+      </div>
+      
+      <div class="form-actions" style="margin-top: 20px;">
+        <button class="btn-secondary" onclick="hideDetails()">Fermer</button>
+      </div>
+    </div>
+
   </div>
 
-  <!-- DETAILS -->
-  <div id="details">
-    <h3>📄 voiture Details</h3>
-    <div class="row"><strong>Brand:</strong> <span id="d-brand"></span></div>
-    <div class="row"><strong>Model:</strong> <span id="d-model"></span></div>
-    <div class="row"><strong>Color:</strong> <span id="d-color"></span></div>
-    <div class="row"><strong>year:</strong> <span id="d-year"></span></div>
-    <div class="row"><strong>price:</strong> <span id="d-price"></span></div>
-    <div class="row"><strong>age:</strong> <span id="d-age"></span></div>
-    <div class="row"><strong>kilometrage:</strong> <span id="d-mileage"></span></div>
-    <div class="row"><strong>isAvailable</strong> <span id="d-isAvailable"></span></div>
-
-
-
-    <br />
-    <button onclick="hideDetails()">Close</button>
-  </div>
-
-  <!-- ✅ JS SÉPARÉ -->
   <script src="voiture.js"></script>
 
 </body>

@@ -7,10 +7,12 @@ import {
   BeforeUpdate,
 } from 'typeorm';
 import { ObjectId } from 'mongodb';
+import { Transform } from 'class-transformer';
 
 @Entity('voiture')
 export class Voiture {
   @ObjectIdColumn()
+  @Transform(({ value }) => value.toString(), { toPlainOnly: true })
   _id: ObjectId;
 
   @Column()
