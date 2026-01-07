@@ -1,5 +1,5 @@
 import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { Server } from 'http';
+import { Server } from 'socket.io'; 
 import { VoituresService } from './voitures.service';
 import { CreateVoitureDto } from 'src/dto/create-voiture.dto';
 import { UpdateVoitureDto } from 'src/dto/update-voiture.dto';
@@ -13,6 +13,8 @@ export class VoituresGateway {
 
   constructor(private readonly voitureService: VoituresService) {}
 
+
+  
   // CREATE
   @SubscribeMessage('voiture:create')
   async create(@MessageBody() dto: CreateVoitureDto) {
@@ -22,10 +24,12 @@ export class VoituresGateway {
   }
 
   // READ ALL
-  @SubscribeMessage('voiture:findAll')
-  async findAll() {
-    return this.voitureService.findAll();
-  }
+@SubscribeMessage('voiture:findAll')
+async findAll() {
+  const voitures = await this.voitureService.findAll();
+  this.server.emit('voiture:findAllResult', voitures);
+}
+
 
   // READ ONE
   @SubscribeMessage('voiture:findOne')

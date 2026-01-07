@@ -6,7 +6,13 @@ let showOnlyAvailable = false;
 // ================= SOCKET EVENTS =================
 
 socket.on('connect', () => {
-  socket.emit('voiture:findAll', null, renderVoitures);
+  socket.emit('voiture:findAll');
+
+socket.on('voiture:findAllResult', data => {
+  voitures = data;
+  renderVoitures();
+});
+
 });
 
 socket.on('voiture:created', voiture => {
@@ -127,7 +133,8 @@ function editVoiture(id) {
   color.value = v.color;
   price.value = v.price;
   mileage.value = v.mileage;
-  isAvailable.value = v.isAvailable;
+  isAvailable.checked = v.isAvailable;
+
 
 
   document.getElementById('formTitle').innerText = 'Edit Voiture';
